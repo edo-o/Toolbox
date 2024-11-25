@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 import subprocess
-
+import os
+import shutil
 
 #-------------------File Hunter (original)----------------------#
 
@@ -58,7 +59,7 @@ def scan_corrupt_files():
     display_command(command, text_display_commands)
 
 def suggest_office_repair():
-    command = (
+    command = ( #Office repair for 32bit og 64bit maskiner
         "For 32-bit Office:\n"
         "\"C:\\Program Files (x86)\\Common Files\\Microsoft Shared\\ClickToRun\\OfficeC2RClient.exe\" /repair user\n\n"
         "For 64-bit Office:\n"
@@ -66,6 +67,7 @@ def suggest_office_repair():
         "Note: Copy the appropriate command for your system architecture."
     )
     display_command(command, text_display_commands)
+
 
 #add flere commands her
 
@@ -76,6 +78,32 @@ def copy_command():
     root.clipboard_append(text_in_box.strip())
     root.update()
 
+#-----------------------browser commands--------------------------#
+
+def display_browser_command(browser_command, output_widget):
+    output_widget.delete(1.0, tk.END)
+    output_widget.insert(tk.END, browser_command)
+
+def clear_chrome_cache():
+    browser_command = ("rd /s /q \"%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Cache\"\n"
+        "rd /s /q \"%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Cookies\"\n\n")
+    display_command(browser_command, text_display_browser_commands)
+
+def clear_firefox_cache():
+    browser_command = ("rd /s /q \"%APPDATA%\\Mozilla\\Firefox\\Profiles\\<ProfileName>\\cache2\"\n"
+        "del \"%APPDATA%\\Mozilla\\Firefox\\Profiles\\<ProfileName>\\cookies.sqlite\"\n\n")
+    display_command(browser_command, text_display_browser_commands)
+
+def clear_edge_cache():
+    browser_command = ("rd /s /q \"%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Cache\"\n"
+        "rd /s /q \"%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Cookies\"\n\n")
+    display_command(browser_command, text_display_browser_commands)
+
+def copy_browser_command():
+    text_in_box = text_display_browser_commands.get("1.0", tk.END)
+    root.clipboard_clear()
+    root.clipboard_append(text_in_box.strip())
+    root.update()
 
 #-------------------main window setup-----------------------#
 
@@ -128,6 +156,7 @@ button2_enhanced.pack()
 tab3 = tk.Frame(notebook)
 notebook.add(tab3, text="System Commands")
 
+
 button_update_drivers = tk.Button(tab3, text="Update Drivers", command=suggest_update_drivers)
 button_update_drivers.pack()
 
@@ -140,11 +169,33 @@ button_scan_corrupt_files.pack()
 button_office_repair = tk.Button(tab3, text="Office repair", command=suggest_office_repair)
 button_office_repair.pack()
 
+
 text_display_commands = tk.Text(tab3)
 text_display_commands.pack()
 
 button_copy_command = tk.Button(tab3, text="Copy Command", command=copy_command)
 button_copy_command.pack()
+
+
+#--------------------------Tab 4: Browser commands------------------#
+
+tab4 = tk.Frame(notebook)
+notebook.add(tab4, text="Browser Commands")
+
+button_clear_chrome_cache = tk.Button(tab4, text="Clear Chrome Cache and Cookies", command=clear_chrome_cache)
+button_clear_chrome_cache.pack()
+
+button_clear_firefox_cache = tk.Button(tab4, text="Clear Firefox Cache and Cookies", command=clear_firefox_cache)
+button_clear_firefox_cache.pack()
+
+button_clear_edge_cache = tk.Button(tab4, text="Clear Edge Cache and Cookies", command=clear_edge_cache)
+button_clear_edge_cache.pack()
+
+text_display_browser_commands = tk.Text(tab4)
+text_display_browser_commands.pack()
+
+button_copy_browser_command = tk.Button(tab4, text="Copy Browser Command", command=copy_browser_command)
+button_copy_browser_command.pack()
 
 #------------------------Display notebook------------------------#
 
