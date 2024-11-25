@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 import subprocess
 
+
+#-------------------File Hunter (original)----------------------#
+
 def original_change_text():
     enteredText = text_original.get()
     fileHunterCommand = f'dir "*{enteredText}" /s'
@@ -13,7 +16,8 @@ def copy_original():
     root.clipboard_clear()
     root.clipboard_append(text_in_box)
     root.update()
-    
+
+#----------------------File Hunter (V2)---------------------------#
 
 def tab2_change_text():
     enteredText = text_enhanced.get()
@@ -34,11 +38,56 @@ def tab2_copy():
     root.clipboard_append(text_in_box)
     root.update()
 
+#--------------------System command suggestions--------------------#
+
+def display_command(command, output_widget):
+    output_widget.delete(1.0, tk.END)
+    output_widget.insert(tk.END, command)
+
+
+def suggest_update_drivers():
+    command = "pnputil /scan-devices" #oppdatere drivere
+    display_command(command, text_display_commands)
+
+def suggest_list_installed_drivers():
+    command = "driverquery" #listere drivere i pcen
+    display_command(command, text_display_commands)
+
+def scan_corrupt_files():
+    command = "sfc /scannow" #Sjekke for og fixe corrupt filer
+    display_command(command, text_display_commands)
+
+def suggest_office_repair():
+    command = (
+        "For 32-bit Office:\n"
+        "\"C:\\Program Files (x86)\\Common Files\\Microsoft Shared\\ClickToRun\\OfficeC2RClient.exe\" /repair user\n\n"
+        "For 64-bit Office:\n"
+        "\"C:\\Program Files\\Common Files\\Microsoft Shared\\ClickToRun\\OfficeC2RClient.exe\" /repair user\n\n"
+        "Note: Copy the appropriate command for your system architecture."
+    )
+    display_command(command, text_display_commands)
+
+#add flere commands her
+
+
+def copy_command():
+    text_in_box = text_display_commands.get("1.0", tk.END)
+    root.clipboard_clear()
+    root.clipboard_append(text_in_box.strip())
+    root.update()
+
+
+#-------------------main window setup-----------------------#
+
 root = tk.Tk()
 root.geometry("800x500")
 root.title("ToolBox")
 
+#-------------------Notebook (tab system)-----------------------#
+
 notebook = ttk.Notebook(root)
+
+#-------------------Tab 1: File Hunter (Original)-----------------------#
 
 tab1 = tk.Frame(notebook)
 notebook.add(tab1, text="File Hunter (Original)")
@@ -57,6 +106,8 @@ text_display_original.pack()
 button2_original = tk.Button(tab1, text="Copy", command=copy_original)
 button2_original.pack()
 
+#-------------------Tab 2: File Hunter (V2)-----------------------#
+
 tab2 = tk.Frame(notebook)
 notebook.add(tab2, text="File Hunter (V2)")
 
@@ -72,6 +123,32 @@ text_display_enhanced.pack()
 button2_enhanced = tk.Button(tab2, text="Copy results", command=tab2_copy)
 button2_enhanced.pack()
 
+#-------------------Tab 3: System command suggestions---------------------#
+
+tab3 = tk.Frame(notebook)
+notebook.add(tab3, text="System Commands")
+
+button_update_drivers = tk.Button(tab3, text="Update Drivers", command=suggest_update_drivers)
+button_update_drivers.pack()
+
+button_list_drivers = tk.Button(tab3, text="List Installed Drivers", command=suggest_list_installed_drivers)
+button_list_drivers.pack()
+
+button_scan_corrupt_files = tk.Button(tab3, text="Check and Fix Corrupt Files", command=scan_corrupt_files)
+button_scan_corrupt_files.pack()
+
+button_office_repair = tk.Button(tab3, text="Office repair", command=suggest_office_repair)
+button_office_repair.pack()
+
+text_display_commands = tk.Text(tab3)
+text_display_commands.pack()
+
+button_copy_command = tk.Button(tab3, text="Copy Command", command=copy_command)
+button_copy_command.pack()
+
+#------------------------Display notebook------------------------#
+
+notebook.pack(fill="both", expand=True)
 
 
 # tab3 = tk.Frame(notebook)
@@ -80,10 +157,6 @@ button2_enhanced.pack()
 
 # notebook.add(tab3, text="tab3")
 # notebook.add(tab4, text="tab4")
-
-
-
-notebook.pack(fill="both", expand=True)
 
 # label = tk.Label(root, text="File Finder", font=("Arial", 18))
 # label.pack()
