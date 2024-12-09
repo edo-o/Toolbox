@@ -231,7 +231,7 @@ button_scan_check_disk.pack()
 button_office_repair = tk.Button(tab3, text="Office repair", command=suggest_office_repair)
 button_office_repair.pack()
 
-button_office_repair = tk.Button(tab3, text="Office repair", command=battery_health_report)
+button_office_repair = tk.Button(tab3, text="Battery report", command=battery_health_report)
 button_office_repair.pack()
 
 
